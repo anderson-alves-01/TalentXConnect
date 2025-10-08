@@ -19,6 +19,7 @@ import { Professional } from "@shared/schema";
 import { SuggestionInput } from "@/components/ui/suggestion-input";
 import { ProfileUpdateForm } from "@/components/profile-update-form";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import logoImage from "@assets/image (1)_1758753116840.png";
 
 // Professional profile form schema
 const professionalProfileSchema = z.object({
@@ -666,6 +667,15 @@ export default function ProfessionalDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
+              <Link href="/" className="flex items-center hover:opacity-80 transition-opacity" data-testid="link-logo">
+                <img 
+                  src={logoImage} 
+                  alt="MaGenX Logo" 
+                  className="w-[953px] h-[262px] max-w-[120px] max-h-[33px] object-contain"
+                  data-testid="logo"
+                />
+              </Link>
+              <div className="h-8 w-px bg-border" />
               <img 
                 src={(user as any)?.profileImageUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${(user as any)?.email}`}
                 alt="Profile"
