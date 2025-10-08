@@ -101,8 +101,15 @@ export default function JobDetails() {
 
   const handleApply = () => {
     if (!user) {
-      const redirectUrl = encodeURIComponent(`/jobs/${id}?action=apply`);
-      setLocation(`/auth?redirect=${redirectUrl}`);
+      setIsDialogOpen(false);
+      toast({
+        title: t('jobs.apply.loginRequired'),
+        variant: "destructive",
+      });
+      setTimeout(() => {
+        const redirectUrl = encodeURIComponent(`/jobs/${id}?action=apply`);
+        setLocation(`/auth?redirect=${redirectUrl}`);
+      }, 100);
       return;
     }
     applyMutation.mutate();
