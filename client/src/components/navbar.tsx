@@ -4,12 +4,35 @@ import { Link } from "wouter";
 import logoImage from "@assets/image (1)_1758753116840.png";
 import { useLanguage } from "@/contexts/language-context";
 import LanguageSelector from "@/components/language-selector";
-import { Menu } from "lucide-react";
+import { Menu, LogOut, User } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/hooks/use-auth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Navbar() {
   const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
+  const { user, logoutMutation } = useAuth();
+  
+  const handleLogout = async () => {
+    await logoutMutation.mutateAsync();
+    window.location.href = "/";
+  };
+  
+  const getDashboardLink = () => {
+    if (!user) return "/";
+    if (user.role === "admin") return "/admin";
+    if (user.role === "company") return "/company";
+    if (user.role === "professional") return "/professional";
+    return "/";
+  };
   
   return (
     <nav className="bg-white sticky top-0 z-50 border-b border-gray-200" data-testid="navbar">
@@ -37,21 +60,56 @@ export default function Navbar() {
           {/* Desktop Actions */}
           <div className="hidden lg:flex items-center space-x-4">
             <LanguageSelector />
-            <Button 
-              variant="ghost"
-              className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 font-medium"
-              onClick={() => window.location.href = "/auth"}
-              data-testid="button-login"
-            >
-              {t('nav.login')}
-            </Button>
-            <Button 
-              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-full font-medium"
-              onClick={() => window.location.href = "/auth"}
-              data-testid="button-signup"
-            >
-              {t('nav.signup')}
-            </Button>
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="ghost"
+                    className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 font-medium"
+                    data-testid="button-user-menu"
+                  >
+                    <User className="h-5 w-5 mr-2" />
+                    {user.username}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href={getDashboardLink()} data-testid="link-dashboard">
+                      Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    onClick={handleLogout}
+                    className="text-red-600 cursor-pointer"
+                    data-testid="button-logout"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <>
+                <Button 
+                  variant="ghost"
+                  className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 font-medium"
+                  onClick={() => window.location.href = "/auth"}
+                  data-testid="button-login"
+                >
+                  {t('nav.login')}
+                </Button>
+                <Button 
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-full font-medium"
+                  onClick={() => window.location.href = "/auth"}
+                  data-testid="button-signup"
+                >
+                  {t('nav.signup')}
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -106,27 +164,61 @@ export default function Navbar() {
                     {t('nav.contact')}
                   </Link>
                   <div className="border-t pt-6 space-y-4">
-                    <Button 
-                      variant="outline"
-                      className="w-full font-medium"
-                      onClick={() => {
-                        setIsOpen(false);
-                        window.location.href = "/auth";
-                      }}
-                      data-testid="button-mobile-login"
-                    >
-                      {t('nav.login')}
-                    </Button>
-                    <Button 
-                      className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full font-medium"
-                      onClick={() => {
-                        setIsOpen(false);
-                        window.location.href = "/auth";
-                      }}
-                      data-testid="button-mobile-signup"
-                    >
-                      {t('nav.signup')}
-                    </Button>
+                    {user ? (
+                      <>
+                        <div className="px-2 py-3 bg-gray-50 rounded-lg">
+                          <p className="text-sm text-gray-500">Logged in as</p>
+                          <p className="font-semibold text-gray-900">{user.username}</p>
+                        </div>
+                        <Button 
+                          variant="outline"
+                          className="w-full font-medium"
+                          onClick={() => {
+                            setIsOpen(false);
+                            window.location.href = getDashboardLink();
+                          }}
+                          data-testid="button-mobile-dashboard"
+                        >
+                          Dashboard
+                        </Button>
+                        <Button 
+                          variant="outline"
+                          className="w-full text-red-600 hover:text-red-700 font-medium"
+                          onClick={() => {
+                            setIsOpen(false);
+                            handleLogout();
+                          }}
+                          data-testid="button-mobile-logout"
+                        >
+                          <LogOut className="h-4 w-4 mr-2" />
+                          Logout
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button 
+                          variant="outline"
+                          className="w-full font-medium"
+                          onClick={() => {
+                            setIsOpen(false);
+                            window.location.href = "/auth";
+                          }}
+                          data-testid="button-mobile-login"
+                        >
+                          {t('nav.login')}
+                        </Button>
+                        <Button 
+                          className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-full font-medium"
+                          onClick={() => {
+                            setIsOpen(false);
+                            window.location.href = "/auth";
+                          }}
+                          data-testid="button-mobile-signup"
+                        >
+                          {t('nav.signup')}
+                        </Button>
+                      </>
+                    )}
                   </div>
                 </div>
               </SheetContent>
