@@ -1,6 +1,12 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useParams, Link, useLocation } from "wouter";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,7 +20,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ArrowLeft, Building2, Clock, DollarSign, Briefcase, CheckCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  Building2,
+  Clock,
+  DollarSign,
+  Briefcase,
+  CheckCircle,
+} from "lucide-react";
 import { PublicJob } from "@shared/schema";
 import { useLanguage } from "@/contexts/language-context";
 import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
@@ -37,23 +50,23 @@ export default function JobDetails() {
   // Auto-open apply dialog if user returned from login with action=apply
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const action = params.get('action');
-    const welcome = params.get('welcome');
-    
+    const action = params.get("action");
+    const welcome = params.get("welcome");
+
     // If welcome=true, it's a new user who needs to create profile first
-    if (welcome === 'true' && user) {
+    if (welcome === "true" && user) {
       // Store the job ID they want to apply to
-      sessionStorage.setItem('pendingJobApplication', id!);
+      sessionStorage.setItem("pendingJobApplication", id!);
       // Redirect to professional dashboard to create profile
-      setLocation('/professional');
+      setLocation("/professional");
       return;
     }
-    
+
     // Only proceed if action=apply is present and user is authenticated
-    if (action === 'apply' && user) {
+    if (action === "apply" && user) {
       setIsDialogOpen(true);
       // Clean up the URL parameter
-      window.history.replaceState({}, '', `/jobs/${id}`);
+      window.history.replaceState({}, "", `/jobs/${id}`);
     }
   }, [user, id, setLocation]);
 
@@ -67,7 +80,7 @@ export default function JobDetails() {
     mutationFn: async () => {
       if (!user) {
         toast({
-          title: t('jobs.apply.loginRequired'),
+          title: t("jobs.apply.loginRequired"),
           variant: "destructive",
         });
         throw new Error("Not authenticated");
@@ -78,21 +91,21 @@ export default function JobDetails() {
         coverLetter,
         proposedRate: proposedRate ? parseFloat(proposedRate) : undefined,
       });
-      
+
       return await res.json();
     },
     onSuccess: () => {
       toast({
-        title: t('jobs.apply.success'),
+        title: t("jobs.apply.success"),
       });
-      queryClient.invalidateQueries({ queryKey: ['/api/applications/my'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/applications/my"] });
       setIsDialogOpen(false);
       setCoverLetter("");
       setProposedRate("");
     },
     onError: (error: any) => {
       toast({
-        title: t('jobs.apply.error'),
+        title: t("jobs.apply.error"),
         description: error.message || "Please try again",
         variant: "destructive",
       });
@@ -103,7 +116,7 @@ export default function JobDetails() {
     if (!user) {
       setIsDialogOpen(false);
       toast({
-        title: t('jobs.apply.loginRequired'),
+        title: t("jobs.apply.loginRequired"),
         variant: "destructive",
       });
       setTimeout(() => {
@@ -121,7 +134,7 @@ export default function JobDetails() {
         <Navbar />
         <div className="flex flex-col items-center justify-center py-20">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
-          <span className="text-muted-foreground">{t('jobs.loading')}</span>
+          <span className="text-muted-foreground">{t("jobs.loading")}</span>
         </div>
         <Footer />
       </div>
@@ -145,7 +158,7 @@ export default function JobDetails() {
               <Button asChild>
                 <Link href="/jobs">
                   <ArrowLeft className="w-4 h-4 mr-2" />
-                  {t('jobs.details.backToJobs')}
+                  {t("jobs.details.backToJobs")}
                 </Link>
               </Button>
             </CardContent>
@@ -159,13 +172,18 @@ export default function JobDetails() {
   return (
     <div className="min-h-screen bg-background" data-testid="job-details-page">
       <Navbar />
-      
+
       <div className="container mx-auto px-4 py-8 sm:py-12 max-w-5xl">
         {/* Back Button */}
-        <Button variant="ghost" className="mb-6" asChild data-testid="button-back-to-jobs">
+        <Button
+          variant="ghost"
+          className="mb-6"
+          asChild
+          data-testid="button-back-to-jobs"
+        >
           <Link href="/jobs">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            {t('jobs.details.backToJobs')}
+            {t("jobs.details.backToJobs")}
           </Link>
         </Button>
 
@@ -174,15 +192,24 @@ export default function JobDetails() {
           <CardHeader>
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1">
-                <CardTitle className="text-2xl sm:text-3xl mb-3" data-testid="job-detail-title">
+                <CardTitle
+                  className="text-2xl sm:text-3xl mb-3"
+                  data-testid="job-detail-title"
+                >
                   {job.title}
                 </CardTitle>
                 <CardDescription className="flex items-center gap-2 text-base">
                   <Building2 className="w-5 h-5" />
-                  <span data-testid="job-detail-company">{job.company?.name || "Company"}</span>
+                  <span data-testid="job-detail-company">
+                    {job.company?.name || "Company"}
+                  </span>
                 </CardDescription>
               </div>
-              <Badge variant="outline" className="text-base px-4 py-1" data-testid="job-detail-type">
+              <Badge
+                variant="outline"
+                className="text-base px-4 py-1"
+                data-testid="job-detail-type"
+              >
                 {job.type.charAt(0).toUpperCase() + job.type.slice(1)}
               </Badge>
             </div>
@@ -192,10 +219,16 @@ export default function JobDetails() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-muted rounded-lg">
               {job.budget && (
                 <div className="flex items-center gap-3">
-                  <DollarSign className="w-5 h-5 text-primary" />
                   <div>
-                    <p className="text-sm text-muted-foreground">{t('jobs.details.budget')}</p>
-                    <p className="font-semibold" data-testid="job-detail-budget">${job.budget}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {t("jobs.details.budget")}
+                    </p>
+                    <p
+                      className="font-semibold"
+                      data-testid="job-detail-budget"
+                    >
+                      ${job.budget}
+                    </p>
                   </div>
                 </div>
               )}
@@ -203,8 +236,15 @@ export default function JobDetails() {
                 <div className="flex items-center gap-3">
                   <Clock className="w-5 h-5 text-primary" />
                   <div>
-                    <p className="text-sm text-muted-foreground">{t('jobs.details.duration')}</p>
-                    <p className="font-semibold" data-testid="job-detail-duration">{job.duration}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {t("jobs.details.duration")}
+                    </p>
+                    <p
+                      className="font-semibold"
+                      data-testid="job-detail-duration"
+                    >
+                      {job.duration}
+                    </p>
                   </div>
                 </div>
               )}
@@ -212,8 +252,13 @@ export default function JobDetails() {
 
             {/* Description */}
             <div>
-              <h3 className="text-lg font-semibold mb-3">{t('jobs.details.description')}</h3>
-              <p className="text-muted-foreground whitespace-pre-wrap" data-testid="job-detail-description">
+              <h3 className="text-lg font-semibold mb-3">
+                {t("jobs.details.description")}
+              </h3>
+              <p
+                className="text-muted-foreground whitespace-pre-wrap"
+                data-testid="job-detail-description"
+              >
                 {job.description}
               </p>
             </div>
@@ -221,8 +266,13 @@ export default function JobDetails() {
             {/* Requirements */}
             {job.requirements && (
               <div>
-                <h3 className="text-lg font-semibold mb-3">{t('jobs.details.requirements')}</h3>
-                <p className="text-muted-foreground whitespace-pre-wrap" data-testid="job-detail-requirements">
+                <h3 className="text-lg font-semibold mb-3">
+                  {t("jobs.details.requirements")}
+                </h3>
+                <p
+                  className="text-muted-foreground whitespace-pre-wrap"
+                  data-testid="job-detail-requirements"
+                >
                   {job.requirements}
                 </p>
               </div>
@@ -231,10 +281,16 @@ export default function JobDetails() {
             {/* Skills */}
             {job.skills && job.skills.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold mb-3">{t('jobs.details.skills')}</h3>
+                <h3 className="text-lg font-semibold mb-3">
+                  {t("jobs.details.skills")}
+                </h3>
                 <div className="flex flex-wrap gap-2">
                   {job.skills.map((skill, index) => (
-                    <Badge key={index} variant="secondary" data-testid={`job-detail-skill-${index}`}>
+                    <Badge
+                      key={index}
+                      variant="secondary"
+                      data-testid={`job-detail-skill-${index}`}
+                    >
                       {skill}
                     </Badge>
                   ))}
@@ -246,24 +302,30 @@ export default function JobDetails() {
             <div className="pt-4 border-t">
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button size="lg" className="w-full sm:w-auto" data-testid="button-apply-job">
+                  <Button
+                    size="lg"
+                    className="w-full sm:w-auto"
+                    data-testid="button-apply-job"
+                  >
                     <CheckCircle className="w-5 h-5 mr-2" />
-                    {t('jobs.details.applyNow')}
+                    {t("jobs.details.applyNow")}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-md">
                   <DialogHeader>
-                    <DialogTitle>{t('jobs.apply.title')}</DialogTitle>
+                    <DialogTitle>{t("jobs.apply.title")}</DialogTitle>
                     <DialogDescription>
                       {job.title} - {job.company?.name}
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4 py-4">
                     <div className="space-y-2">
-                      <Label htmlFor="coverLetter">{t('jobs.apply.coverLetter')}</Label>
+                      <Label htmlFor="coverLetter">
+                        {t("jobs.apply.coverLetter")}
+                      </Label>
                       <Textarea
                         id="coverLetter"
-                        placeholder={t('jobs.apply.coverLetterPlaceholder')}
+                        placeholder={t("jobs.apply.coverLetterPlaceholder")}
                         value={coverLetter}
                         onChange={(e) => setCoverLetter(e.target.value)}
                         rows={6}
@@ -271,11 +333,13 @@ export default function JobDetails() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="proposedRate">{t('jobs.apply.proposedRate')}</Label>
+                      <Label htmlFor="proposedRate">
+                        {t("jobs.apply.proposedRate")}
+                      </Label>
                       <Input
                         id="proposedRate"
                         type="number"
-                        placeholder={t('jobs.apply.proposedRatePlaceholder')}
+                        placeholder={t("jobs.apply.proposedRatePlaceholder")}
                         value={proposedRate}
                         onChange={(e) => setProposedRate(e.target.value)}
                         data-testid="input-proposed-rate"
@@ -288,7 +352,9 @@ export default function JobDetails() {
                     className="w-full"
                     data-testid="button-submit-application"
                   >
-                    {applyMutation.isPending ? t('jobs.apply.submitting') : t('jobs.apply.submit')}
+                    {applyMutation.isPending
+                      ? t("jobs.apply.submitting")
+                      : t("jobs.apply.submit")}
                   </Button>
                 </DialogContent>
               </Dialog>

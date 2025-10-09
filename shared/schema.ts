@@ -169,7 +169,7 @@ export const jobs = pgTable("jobs", {
   descriptionTranslations: jsonb("description_translations").$type<{ pt: string; en: string; es: string }>(),
   requirementsTranslations: jsonb("requirements_translations").$type<{ pt: string; en: string; es: string }>(),
   skills: jsonb("skills").$type<string[]>().notNull(),
-  budget: decimal("budget", { precision: 10, scale: 2 }),
+  budget: varchar("budget"),
   duration: varchar("duration"), // weeks, months
   type: varchar("type").notNull(), // full-time, part-time, contract, project
   status: jobStatusEnum("status").default("draft"),
