@@ -30,7 +30,7 @@ export default function HeroSection() {
             </Button>
             <Button 
               variant="outline"
-              className="border-white text-white hover:bg-white hover:text-gray-900 px-8 py-4 text-lg font-semibold rounded-full"
+              className="border-2 border-white text-white bg-white/20 backdrop-blur-sm hover:bg-white hover:text-gray-900 px-8 py-4 text-lg font-semibold rounded-full transition-all duration-300"
               onClick={() => window.location.href = "/about"}
               data-testid="button-learn-more"
             >
