@@ -1,0 +1,1 @@
+- [GitHub access checks](github-access-checks.md) — healthy OAuth connection status does not establish access to an organization repository.
